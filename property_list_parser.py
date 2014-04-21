@@ -78,5 +78,6 @@ class PropertyListParser:
 		return agent
 
 
+# test
 pl_parser = PropertyListParser("./list0")
 pl_parser.process()
