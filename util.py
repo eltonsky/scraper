@@ -10,6 +10,10 @@ def is_page_not_found(file):
 	return False
 
 def normalize_addr(addr):
+	"""
+		Used for get an file name for each property.
+		Not necessarily needed, as addr is retrieved from the file.
+	"""
 	addr_ = addr.strip()
 	# if addr is too long and end wtih ..., truncate it at the last ","
 	if addr_.endswith("..."):
@@ -38,6 +42,20 @@ def normalize_addr(addr):
 
 	print new_addr.lower()		
 	return new_addr.lower()
+
+
+def split_street_addr(str_addr):
+	ary = str_addr.split()
+	street_no = ""
+	for i in range(0,len(ary)):
+		if ary[i].isalpha():
+			break
+		street_no += ary[i]
+
+	street_name = str_addr[len(street_no):]
+
+	return (street_no,street_name)
+
 
 def delay():
 	return randint(1,3)*0.86

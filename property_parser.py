@@ -1,6 +1,10 @@
 #!/usr/bin/python
 
 from bs4 import BeautifulSoup
+import util
+import sys
+sys.path.append('dao')
+import address
 
 class PropertyParser:
 
@@ -23,6 +27,7 @@ class PropertyParser:
 
 		# addr
 		addr = self.get_address()
+		addr_id = addr.insert()
 
 		# price
 		price = self.get_price()
@@ -44,6 +49,7 @@ class PropertyParser:
 
 		print(prop_id)
 		print(addr)
+		print(addr_id)
 		print(price)
 		print(type_)
 		print(features)
@@ -60,14 +66,25 @@ class PropertyParser:
 	def get_address(self):
 		addr = self.soup.find("h1",itemprop="address")
 
-		addr_ = {}
+		addr_obj = address.Address()
 
 		for span in addr.find_all("span"):
 			key = span["itemprop"]
 			val = span.get_text()
-			addr_[key] = val
 
-		return addr_
+			if key == "streetAddress":
+				street = util.split_street_addr(val)
+
+				setattr(addr_obj,"_street_no",street[0].strip())
+				setattr(addr_obj,"_street_name",street[1].strip())
+			elif key == "addressLocality":
+				setattr(addr_obj,"_locality",val)
+			elif key == "addressRegion":
+				setattr(addr_obj,"_region",val)
+			elif key == "postalCode":
+				setattr(addr_obj,"_postcode",val)
+
+		return addr_obj
 
 
 	def get_price(self):
