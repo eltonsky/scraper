@@ -23,7 +23,7 @@ class PropertyParser:
 
 	def process(self):
 		# property id
-		prop_id = self.get_property_id()
+		prop_ext_id = self.get_property_id()
 
 		# addr
 		addr = self.get_address()
