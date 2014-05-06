@@ -4,6 +4,12 @@ from bs4 import BeautifulSoup
 from random import randint
 import os, errno
 
+def file_len(fname):
+    with open(fname) as f:
+        for i, l in enumerate(f):
+            pass
+    return i + 1
+
 def is_page_not_found(file):
 	if file.find("p",class_="noMatch") != None:
 		return True
@@ -43,7 +49,6 @@ def normalize_addr(addr):
 		new_addr+=addr_[i]
 		i+=1
 
-	print new_addr.lower()		
 	return new_addr.lower()
 
 
