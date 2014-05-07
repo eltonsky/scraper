@@ -2,7 +2,16 @@
 
 from bs4 import BeautifulSoup
 from random import randint
-import os, errno
+import os, errno, gzip
+
+def gzip_file(src):
+	f_in = open(src, 'rb')
+	f_out = gzip.open(src+".gz", 'wb')
+	f_out.writelines(f_in)
+	f_out.close()
+	f_in.close()
+	os.remove(src)
+
 
 def file_len(fname):
     with open(fname) as f:

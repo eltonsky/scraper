@@ -61,7 +61,7 @@ for i, line in enumerate(fp):
 
 		s_ary = line.split()
 		postcode=s_ary[0]
-		suburb = "_".join(s_ary[1].split(" "))
+		suburb = "_".join(s_ary[1].upper().split(" "))
 
 		print (str(index) + " : Processing " + postcode + " " + suburb)
 
@@ -107,11 +107,11 @@ for i, line in enumerate(fp):
 				addr = util.normalize_addr(a.get_text())
 				p_output = p_output_dir+"{0:0=3d}".format(p_order)+"_"+addr
 				p_order = p_order + 1
-				p_cmd = get_property_url(cmd,user_agent,url_base,href,p_output)
 				p_cmd = get_property_url(cmd,user_agent,url_base,href,p_output.encode('ascii', 'ignore'))
 				
 				print ("	Run property qry : " + p_cmd)
 				call(p_cmd, shell=True)
+				util.gzip_file(p_output)
 
 			sleep(util.delay()) 
 
