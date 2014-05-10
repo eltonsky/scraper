@@ -102,16 +102,21 @@ for i, line in enumerate(fp):
 
 			# download each property
 			for vcard in file_soup.find_all("div",class_="vcard"):
-				a = vcard.find("a")
-				href = a["href"].encode('ascii', 'ignore')
-				addr = util.normalize_addr(a.get_text())
-				p_output = p_output_dir+"{0:0=3d}".format(p_order)+"_"+addr
-				p_order = p_order + 1
-				p_cmd = get_property_url(cmd,user_agent,url_base,href,p_output.encode('ascii', 'ignore'))
-				
-				print ("	Run property qry : " + p_cmd)
-				call(p_cmd, shell=True)
-				util.gzip_file(p_output)
+
+				try:
+					a = vcard.find("a")
+					href = a["href"].encode('ascii', 'ignore')
+					addr = util.normalize_addr(a.get_text())
+					p_output = p_output_dir+"{0:0=3d}".format(p_order)+"_"+addr
+					p_order = p_order + 1
+					p_cmd = get_property_url(cmd,user_agent,url_base,href,p_output.encode('ascii', 'ignore'))
+					
+					print ("	Run property qry : " + p_cmd)
+					call(p_cmd, shell=True)
+					util.gzip_file(p_output)
+
+				except:
+					print "Unexpected error:", sys.exc_info()[0]
 
 			sleep(util.delay()) 
 

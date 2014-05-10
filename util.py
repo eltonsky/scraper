@@ -2,7 +2,9 @@
 
 from bs4 import BeautifulSoup
 from random import randint
-import os, errno, gzip
+import os, errno, gzip, string
+
+valid_chars = "-_.%s%s" % (string.ascii_letters, string.digits)
 
 def gzip_file(src):
 	f_in = open(src, 'rb')
@@ -58,7 +60,7 @@ def normalize_addr(addr):
 		new_addr+=addr_[i]
 		i+=1
 
-	return new_addr.lower()
+	return ''.join(c for c in new_addr.lower() if c in valid_chars)
 
 
 def split_street_addr(str_addr):

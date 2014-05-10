@@ -27,7 +27,7 @@ class PropertyParser:
 
 		# addr
 		addr = self.get_address()
-		addr_id = addr.insert()
+		addr_id = addr.insert1()
 
 		# price
 		price = self.get_price()
@@ -47,7 +47,6 @@ class PropertyParser:
 		# inspection
 		inspections = self.get_inspection()
 
-		print(prop_id)
 		print(addr)
 		print(addr_id)
 		print(price)
@@ -152,5 +151,5 @@ class PropertyParser:
 
 
 # test
-p_parser = PropertyParser("./property/29-31_Granard_Avenue_Park_Orchards_Vic_3114")
+p_parser = PropertyParser("./property/PARK_ORCHARDS/20140506_08/000_21-23_gosford_crescent_park_orchards_vic_3114")
 p_parser.process()
