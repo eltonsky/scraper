@@ -4,7 +4,7 @@ from bs4 import BeautifulSoup
 import util
 import sys
 sys.path.append('dao')
-import address
+import address, property_
 
 class PropertyParser:
 
