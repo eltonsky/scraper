@@ -60,6 +60,34 @@ class DB_Util:
 
 		return cursor
 
+
+	def execproc(self,qry):
+		cursor = self._cnx.cursor(buffered=True)
+		print qry
+		cursor.execute(qry, multi=True)
+
+		result = cursor.fetchone()
+
+		cursor.close()
+
+		self._cnx.commit()
+
+		return result
+
+	def callproc(self,qry,args):
+		cursor = self._cnx.cursor(buffered=True)
+
+		cursor.callproc(qry,args)
+
+		for r in cursor.stored_results():
+			result = r.fetchone()
+
+		cursor.close()
+
+		self._cnx.commit()
+
+		return result
+
 # # test code
 
 # config = {

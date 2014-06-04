@@ -18,6 +18,11 @@ class Address:
 	  "VALUES (%s, %s, %s, %s, %s)"
 	  )
 
+
+	_upd_proc = (
+		"Call pUpdAddress('{0}', '{1}', '{2}' ,'{3}' ,'{4}');"
+	  )	
+
 	_update_qry = (
 	  "Update taddr set street_no = %s, street_name= %s, locality=%s, region = %s, postcode = %s)"
 	  )
@@ -47,6 +52,28 @@ class Address:
 		self._db_util.close()
 
 		return row_id
+
+
+	def upd_proc(self):
+		if self._db_util == None:
+			self._db_util = db_util.DB_Util()
+
+		if self._db_util.connect() < 0:
+			return -1
+
+		args=(self._street_no,self._street_name,self._locality,self._region,self._postcode)
+
+		result = self._db_util.callproc("pUpdAddress", args)
+
+		self._db_util.close()
+
+		status = result[0]
+		row_id = result[1]
+
+		print ("Inserted addr_id is " + str(row_id))
+
+		return (status row_id)
+
 
 	def update(self):
 		if self._db_util == None:

@@ -22,21 +22,20 @@ class PropertyParser:
 			self.html.close()
 
 	def process(self):
-		# property id
-		prop_ext_id = self.get_property_id()
-
 		# addr
 		addr = self.get_address()
-		addr_id = addr.insert1()
+		res = addr.upd_proc()
+		addr_status = res[0]
+		addr_id = res[1]
+
+		# property
+		prop = self.get_property(addr_id) 
+		res = prop.upd_proc()
+		prop_status = res[0]
+		prop_id = res[1]
 
 		# price
 		price = self.get_price()
-
-		# type
-		type_ = self.get_type()
-
-		# features
-		features = self.get_features()
 		
 		# agent
 		agents = self.get_agents()
@@ -55,6 +54,18 @@ class PropertyParser:
 		print(agents)
 		print(agency)
 		print(inspections)
+
+	def get_property(self,addr_id):
+		# property id
+		prop_ext_id = self.get_property_id()
+		# features
+		features = self.get_features()
+		# type
+		type_ = self.get_type()
+
+		prpt_obj = property_.Property(prop_ext_id, addr_id, features["land_size"], type_)
+
+		return prpt_obj
 
 
 	def get_property_id(self):
