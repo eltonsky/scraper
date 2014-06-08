@@ -47,6 +47,10 @@ CREATE TABLE IF NOT EXISTS tsale (
   FOREIGN KEY (prop_id) 
         REFERENCES tproperty(prop_id),
 
+  agency_id INT NOT NULL,
+  FOREIGN KEY (agency_id) 
+        REFERENCES tagency(agency_id),  
+
   status    VARCHAR(32) NOT NULL DEFAULT "LISTED",
   INDEX status_ix(status),
 
@@ -56,6 +60,7 @@ CREATE TABLE IF NOT EXISTS tsale (
 
 # tprice
 CREATE TABLE IF NOT EXISTS tprice (
+  price_id   INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
   sale_id 	INT NOT NULL,
   FOREIGN KEY (sale_id) 
         REFERENCES tsale(sale_id),
@@ -139,15 +144,16 @@ CREATE TABLE IF NOT EXISTS tagent (
 
 
 # tpropertyagent
-CREATE TABLE IF NOT EXISTS tpropertyagent (
+CREATE TABLE IF NOT EXISTS tSaleAgent (
+  sale_agent_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
   agent_id 	INT NOT NULL,
-  prop_id   INT NOT NULL,
+  sale_id   INT NOT NULL,
   FOREIGN KEY (agent_id) 
         REFERENCES tagent(agent_id), 
   INDEX agent_id_ix(agent_id),
-  FOREIGN KEY (prop_id) 
-        REFERENCES tproperty(prop_id), 
-  INDEX prop_id_ix(prop_id)
+  FOREIGN KEY (sale_id) 
+        REFERENCES tSale(sale_id), 
+  INDEX sale_id_ix(sale_id)
 ) ENGINE=INNODB ;
 
 

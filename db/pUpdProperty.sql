@@ -9,10 +9,10 @@ CREATE PROCEDURE pUpdProperty(
     IN  p_type                       VARCHAR(32)
 )
 
-
     BEGIN
 
     	DECLARE v_property_id INT DEFAULT 0;
+    	DECLARE v_status INT DEFAULT 0;
 
 		select 
 			prop_id
@@ -21,11 +21,12 @@ CREATE PROCEDURE pUpdProperty(
 		from
 			tProperty
 		WHERE
-			p_addr_id = addr_id
-		and p_ext_id = ext_id;
+			p_addr_id = addr_id;
+		-- don't need to check p_ext_id, because for each sale it's different
 
 		-- insert
 		IF v_property_id = 0 then
+
 			INSERT INTO tProperty(
 				ext_id,
 				addr_id,
@@ -38,12 +39,15 @@ CREATE PROCEDURE pUpdProperty(
 	  			p_land_size
 	  		);
 
-	  		select 0,LAST_INSERT_ID();
+	  		set v_property_id = LAST_INSERT_ID();
+	  		set v_status = 0;
 
 	  	ELSE
-	  		select -1,v_property_id;
+	  		set v_status = -1;
 
 		END IF;
+
+		select v_status,v_property_id;
 
     END //
 DELIMITER ;
