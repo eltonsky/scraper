@@ -2,26 +2,20 @@
 
 import db_util
 
-class Property:
-	"""property"""
+class Agent:
+	"""Agent"""
 
-	_land_size=""
-	_ext_id=""
-	_type=""
-	_addr_id=""
+	_name=""
+	_phone=""
+	_agency_id=""
 	_cr_date=""
 	_db_util=None
 
-	_upd_proc = (
-		"Call pUpdAddress('{0}', '{1}', '{2}' ,'{3}' ,'{4}');"
-	  )	
-
-	def __init__(self,ext_id="",addr_id="",land_size="",type_="",cr_date=""):
-		self._ext_id = ext_id
-		self._land_size = land_size
-		self._type=type_
+	def __init__(self,name="",phone="",agency_id="",cr_date=""):
+		self._name=name
+		self._phone=phone
+		self._agency_id=agency_id
 		self._cr_date = cr_date
-		sefl._addr_id = addr_id
 
 	def upd_proc(self):
 		if self._db_util == None:
@@ -30,18 +24,18 @@ class Property:
 		if self._db_util.connect() < 0:
 			return -1
 
-		args=(self._ext_id,self._addr_id,self._land_size,self._type)
+		args=(self._agency_id, self._name, self._phone)
 
-		result = self._db_util.callproc("pUpdProperty", args)
+		result = self._db_util.callproc("pUpdAgent", args)
 
 		self._db_util.close()
 
 		status = result[0]
-		row_id = result[1]
+		agent_id = result[1]
 
-		print ("Updated/Inserted property_id is " + str(row_id))
+		print ("Updated/Inserted agent : " +str(agent_id))
 
-		return (status row_id)
+		return (status agent_id)
 
 
 	def select(self,addr_id):
@@ -65,5 +59,5 @@ class Property:
 
 
 	def __str__(self):
-		return (self._ext_id + "," + self._land_size+","+self._type+","+self._cr_date)
+		return (self._agency_id+","+self._name+","+self._phone)
 
