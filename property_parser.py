@@ -4,7 +4,7 @@ from bs4 import BeautifulSoup
 import util
 import sys
 sys.path.append('dao')
-import address, property_
+import address, property_, sale, agency, agent, features, inspection
 
 class PropertyParser:
 
@@ -28,42 +28,62 @@ class PropertyParser:
 		addr_status = res[0]
 		addr_id = res[1]
 
+		# features
+		features = get_features()
+
 		# property
-		prop = self.get_property(addr_id) 
+		prop = self.get_property(addr_id,features._land_size) 
 		res = prop.upd_proc()
 		prop_status = res[0]
 		prop_id = res[1]
 
-		# price
-		price = self.get_price()
-		
-		# agent
-		agents = self.get_agents()
-
 		# agency
 		agency  = self.get_agency()
+		res = agency.upd_proc()
+		agency_id = res[1]
+
+		# sale/price
+		sale = self.get_sale(prop_id, agency_id, features)
+		res = sale.upd_proc()
+		sale_status = res[0]
+		sale_id = res[1]
+		price_id = res[2]
+
+		setattr(sale,"_sale_id",sale_id)
+		
+		# agent
+		agents = self.get_agents(agency_id)
+		agent_ids=""
+		for agent in agents:
+			res = agent.upd_proc()
+			if res[1] > 0:
+				agent_ids.append(res[1])
+
+		# sale agent
+		sale.upd_sale_agent(agent_ids)
 
 		# inspection
-		inspections = self.get_inspection()
+		inspections = self.get_inspection(sale_id)
+		res = inspections.upd_proc()
 
-		print(addr)
-		print(addr_id)
-		print(price)
-		print(type_)
-		print(features)
-		print(agents)
-		print(agency)
-		print(inspections)
 
-	def get_property(self,addr_id):
+		# print(addr)
+		# print(addr_id)
+		# print(price)
+		# print(type_)
+		# print(features)
+		# print(agents)
+		# print(agency)
+		# print(inspections)
+
+	def get_property(self,addr_id, land_size):
 		# property id
 		prop_ext_id = self.get_property_id()
-		# features
-		features = self.get_features()
+
 		# type
 		type_ = self.get_type()
 
-		prpt_obj = property_.Property(prop_ext_id, addr_id, features["land_size"], type_)
+		prpt_obj = property_.Property(prop_ext_id, addr_id, land_size, type_)
 
 		return prpt_obj
 
@@ -97,28 +117,51 @@ class PropertyParser:
 		return addr_obj
 
 
-	def get_price(self):
+	def get_sale(self,prop_id,agency_id, features):
 		price_tag = self.soup.find("p", class_="price")
 
-		price = price_tag.find("span").get_text()
+		price_text = price_tag.find("span").get_text()
 
-		return price
+		# if it's in auction
+		auction_tag = self.soup.find("p", class_="auctionDetails")
+		if auction != None:
+			# call it price type rather than sale_type, cause one sale may change
+			# from normal sale to auction or vice versa. It's flexible to track 
+			# it in price.
+
+			# auction
+			price_type = 'A'
+		else :
+			# normal sale
+			price_type = 'N'		
+
+		# TODO: track auction details
+
+		# "Under Contract"/Under Offer etc.
+		sale_status = self.soup.find("div", class_="auction_details").find("strong").get_text()
+
+		sale = sale.Sale(0,prop_id, agency_id, price_text, price_type, sale_status, features)
+
+		return sale
 		
 	def get_features(self):
-		features = {}
+		feature = feature.Feature()
 
 		prop_features = self.soup.find("ul",class_="propertyFeatures")
 
 		if prop_features != None:
+		# Bedrooms
+		# Bathrooms
+		# Car Spaces
 			for f in prop_features.select("li"):
 				key = f.find("img")["alt"]
 				val = f.find("span").get_text()
-				features[key] = val
+				setattr(feature,"_"+string.replace(a.lower()," ","_"),val)
 
 		# land size
-		features["land_size"] = self.get_land_size()
+		setattr(feature,"_land_size",self.get_land_size())
 
-		return features
+		return feature
 
 	def get_land_size(self):
 		land_size=""
@@ -135,28 +178,30 @@ class PropertyParser:
 		return self.soup.find("span",class_="propertyType").get_text()
 
 
-	def get_agents(self):
+	def get_agents(self,agency_id):
 		agents = []
 		# to avoid duplicate agent info make the seletor compilicated a bit
-		for agent in self.soup.find("div",id="agentInfoExpanded").find_all("div",class_="agent"):
-			name = agent.find("p",class_="agentName").find("strong").get_text()
-			phone = agent.find("li",class_="phone").get_text()
-			agents.append(name + "," + phone)
+		for agent_tag in self.soup.find("div",id="agentInfoExpanded").find_all("div",class_="agent"):
+			name = agent_tag.find("p",class_="agentName").find("strong").get_text()
+			phone = agent_tag.find("li",class_="phone").get_text()
 
+			agents.append(agent.Agent(name,phone,agency_id))
 		return agents
 
 
 	def get_agency(self):
-		return self.soup.find("p",class_="agencyName").get_text()
+		name = self.soup.find("p",class_="agencyName").get_text()
+		agency = agency.Agency(name)
+		return agency
 
-	def get_inspection(self):
+	def get_inspection(self,sale_id):
 		inspection = self.soup.find("div",id="inspectionTimes")
 
 		inspects = []
 		for event in inspection.find_all("a",itemprop="events"):
 			start = event.find("meta",itemprop="startDate")["content"]
 			end = event.find("meta",itemprop="endDate")["content"]
-			inspects.append(start + "," + end)
+			inspects.append(inspection.Inspection(sale_id,start,end))
 
 		return inspects
 
