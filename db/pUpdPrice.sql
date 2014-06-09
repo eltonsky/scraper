@@ -1,5 +1,5 @@
 
-drop PROCEDURE pUpdPrice;
+drop PROCEDURE IF EXISTS pUpdPrice;
 
 DELIMITER //
 CREATE PROCEDURE pUpdPrice(
@@ -26,7 +26,7 @@ CREATE PROCEDURE pUpdPrice(
 		and p_price = price
 		and p_price_type = type;
 
-		if o_price_id == 0
+		if o_price_id = 0 then
 			insert into tprice(
 				sale_id,
 				price,

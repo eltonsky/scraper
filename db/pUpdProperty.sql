@@ -1,5 +1,5 @@
 
-drop PROCEDURE pUpdProperty;
+drop PROCEDURE if exists pUpdProperty;
 
 DELIMITER //
 CREATE PROCEDURE pUpdProperty(

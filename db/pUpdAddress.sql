@@ -1,5 +1,5 @@
 
-drop PROCEDURE pUpdAddress;
+drop PROCEDURE if exists pUpdAddress;
 
 DELIMITER //
 CREATE PROCEDURE pUpdAddress(

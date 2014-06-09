@@ -1,5 +1,5 @@
 
-drop PROCEDURE pUpdSaleAgent;
+drop PROCEDURE IF EXISTS pUpdSaleAgent;
 
 DELIMITER //
 CREATE PROCEDURE pUpdSaleAgent(
@@ -7,9 +7,8 @@ CREATE PROCEDURE pUpdSaleAgent(
     IN  p_agent_id           int
 )
     BEGIN
-
-    	set v_status = 0;
-    	set v_sale_agent_id = 0;
+    	DECLARE v_status INT DEFAULT 0;
+		DECLARE v_sale_agent_id INT DEFAULT 0;
 
 		select 
 			sale_agent_id
@@ -21,7 +20,7 @@ CREATE PROCEDURE pUpdSaleAgent(
 			p_sale_id = sale_id
 		and p_agent_id = agent_id;
 
-		if v_sale_agent_id == 0
+		if v_sale_agent_id = 0 then
 			insert into tSaleAgent(
 				sale_id,
 				agent_id

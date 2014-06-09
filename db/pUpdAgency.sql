@@ -1,15 +1,14 @@
 
-drop PROCEDURE pUpdAgency;
+drop PROCEDURE IF EXISTS pUpdAgency;
 
 DELIMITER //
 CREATE PROCEDURE pUpdAgency(
     IN  p_name                   VARCHAR(32)
 )
     BEGIN
-
-    	set v_status = 0;
-    	set v_agency_id = 0;
-
+    	DECLARE v_status INT DEFAULT 0;
+		DECLARE v_agency_id INT DEFAULT 0;
+		
 		select 
 			agency_id
 		into
@@ -19,7 +18,7 @@ CREATE PROCEDURE pUpdAgency(
 		WHERE
 			p_name = name;
 
-		if v_agency_id == 0
+		if v_agency_id = 0 then
 			insert into tAgency(
 				name
 			)

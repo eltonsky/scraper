@@ -1,5 +1,5 @@
 
-drop PROCEDURE pUpdAgent;
+drop PROCEDURE IF EXISTS pUpdAgent;
 
 DELIMITER //
 CREATE PROCEDURE pUpdAgent(
@@ -8,9 +8,8 @@ CREATE PROCEDURE pUpdAgent(
     IN  p_phone                  VARCHAR(32)
 )
     BEGIN
-
-    	set v_status = 0;
-    	set v_agent_id = 0;
+    	DECLARE v_status INT DEFAULT 0;
+		DECLARE v_agent_id INT DEFAULT 0;
 
 		select 
 			agent_id
@@ -22,7 +21,7 @@ CREATE PROCEDURE pUpdAgent(
 			p_name = name
 		and p_agency_id = agency_id;
 
-		if v_agent_id == 0
+		if v_agent_id = 0 then
 			insert into tAgent(
 				name,
 				phone,

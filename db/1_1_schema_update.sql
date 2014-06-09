@@ -1,7 +1,7 @@
 
-CREATE DATABASE IF NOT EXISTS rea;
+# CREATE DATABASE IF NOT EXISTS rea;
 
-use rea;
+#use rea;
 
 # taddr
 CREATE TABLE IF NOT EXISTS taddr (
@@ -22,6 +22,14 @@ CREATE TABLE IF NOT EXISTS taddr (
   UNIQUE KEY addr_unique_ix (street_no,street_name,locality,region),
 
   cr_date 	TIMESTAMP DEFAULT NOW()
+) ENGINE=INNODB ;
+
+
+# tagentcy
+CREATE TABLE IF NOT EXISTS tagency (
+  agency_id   INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+  name      VARCHAR(32) NOT NULL,
+  cr_date   TIMESTAMP DEFAULT NOW()
 ) ENGINE=INNODB ;
 
 
@@ -75,7 +83,7 @@ CREATE TABLE IF NOT EXISTS tprice (
 
 
 # tfeature
-CREATE TABLE IF NOT EXISTS tfeature (
+CREATE TABLE IF NOT EXISTS tfeatures (
   sale_id 	INT NOT NULL,
   FOREIGN KEY (sale_id) 
         REFERENCES tsale(sale_id),
@@ -87,8 +95,10 @@ CREATE TABLE IF NOT EXISTS tfeature (
   bath      INT,
   INDEX bath_ix(bath),
 
-  car_space INT,
-  INDEX car_space_ix(car_space),
+  car_spaces INT,
+  INDEX car_space_ix(car_spaces),
+
+  land_size VARCHAR(128),
 
   cr_date 	TIMESTAMP DEFAULT NOW()
 ) ENGINE=INNODB ;
@@ -109,6 +119,7 @@ CREATE TABLE IF NOT EXISTS tsalestatus (
 
 # tinspection
 CREATE TABLE IF NOT EXISTS tinspection (
+  inspection_id int NOT NULL PRIMARY KEY AUTO_INCREMENT,
   sale_id 	INT NOT NULL,
   FOREIGN KEY (sale_id) 
         REFERENCES tsale(sale_id),
@@ -119,15 +130,6 @@ CREATE TABLE IF NOT EXISTS tinspection (
 
   cr_date 	TIMESTAMP DEFAULT NOW()
 ) ENGINE=INNODB ;
-
-
-# tagentcy
-CREATE TABLE IF NOT EXISTS tagency (
-  agency_id 	INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
-  name      VARCHAR(32) NOT NULL,
-  cr_date 	TIMESTAMP DEFAULT NOW()
-) ENGINE=INNODB ;
-
 
 
 # tagent
@@ -143,16 +145,16 @@ CREATE TABLE IF NOT EXISTS tagent (
 ) ENGINE=INNODB ;
 
 
-# tpropertyagent
+# tSaleAgent
 CREATE TABLE IF NOT EXISTS tSaleAgent (
   sale_agent_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
   agent_id 	INT NOT NULL,
-  sale_id   INT NOT NULL,
   FOREIGN KEY (agent_id) 
         REFERENCES tagent(agent_id), 
   INDEX agent_id_ix(agent_id),
+  sale_id   INT NOT NULL,
   FOREIGN KEY (sale_id) 
-        REFERENCES tSale(sale_id), 
+        REFERENCES tsale(sale_id),
   INDEX sale_id_ix(sale_id)
 ) ENGINE=INNODB ;
 
