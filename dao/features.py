@@ -1,28 +1,24 @@
 #!/usr/bin/python
 
-import db_util, agent, features
+import db_util
 
-class Sale:
-	"""Sale"""
+class Features:
+	"""Features"""
 
 	_sale_id=""
-	_prop_id=""
-	_agency_id=""
-	_price=""
-	_price_type=""
-	_sale_status=""
+	_bed=""
+	_bath=""
+	_car_sapces=""
+	_land_size=""
 	_cr_date=""
-	_features=None
 	_db_util=None
 
-	def __init__(self,sale_id="",prop_id="",agency_id="",price="",price_type="",sale_status="", features=None, cr_date=""):
+	def __init__(self,sale_id="",bed="",bath="",car_sapces="",land_size="",cr_date=""):
 		self._sale_id = sale_id
-		self._prop_id = prop_id
-		self._agency_id = agency_id
-		self._price=price
-		self._price_type=price_type
-		self._sale_status=sale_status
-		self._features = features
+		self._bed = bed
+		self._bath = bath
+		self._car_sapces= car_sapces
+		self._land_size= land_size
 		self._cr_date = cr_date
 
 	def upd_proc(self):
@@ -32,9 +28,7 @@ class Sale:
 		if self._db_util.connect() < 0:
 			return -1
 
-		args=(self._prop_id,self._agency_id,self._sale_status,self._price,self._price_type,
-			self._features._bed, self._features._bath, self._features._car_spaces,
-			self._features._land_size)
+		args=(self._prop_id,self._agency_id,self._sale_status,self._price,self._price_type)
 
 		result = self._db_util.callproc("pUpdSale", args)
 

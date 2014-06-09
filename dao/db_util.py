@@ -9,7 +9,7 @@ class DB_Util:
 	config = {
 	  'user': 'root',
 	  'host': '127.0.0.1',
-	  'database': 'rea',
+	  'database': 'rea_test1',
 	  'password' : 'et19br24',
 	  'raise_on_warnings': True
 	}
