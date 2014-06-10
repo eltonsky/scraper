@@ -35,7 +35,7 @@ class Agent:
 
 		print ("Updated/Inserted agent : " +str(agent_id))
 
-		return (status agent_id)
+		return [status, agent_id]
 
 
 	def select(self,addr_id):

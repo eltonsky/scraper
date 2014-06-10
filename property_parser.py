@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 from bs4 import BeautifulSoup
-import util
+import util, string
 import sys
 sys.path.append('dao')
 import address, property_, sale, agency, agent, features, inspection
@@ -29,7 +29,7 @@ class PropertyParser:
 		addr_id = res[1]
 
 		# features
-		features = get_features()
+		features = self.get_features()
 
 		# property
 		prop = self.get_property(addr_id,features._land_size) 
@@ -53,7 +53,7 @@ class PropertyParser:
 		
 		# agent
 		agents = self.get_agents(agency_id)
-		agent_ids=""
+		agent_ids=[]
 		for agent in agents:
 			res = agent.upd_proc()
 			if res[1] > 0:
@@ -64,8 +64,8 @@ class PropertyParser:
 
 		# inspection
 		inspections = self.get_inspection(sale_id)
-		res = inspections.upd_proc()
-
+		for insp in inspections:	
+			res = insp.upd_proc()
 
 		# print(addr)
 		# print(addr_id)
@@ -124,7 +124,7 @@ class PropertyParser:
 
 		# if it's in auction
 		auction_tag = self.soup.find("p", class_="auctionDetails")
-		if auction != None:
+		if auction_tag != None:
 			# call it price type rather than sale_type, cause one sale may change
 			# from normal sale to auction or vice versa. It's flexible to track 
 			# it in price.
@@ -140,12 +140,12 @@ class PropertyParser:
 		# "Under Contract"/Under Offer etc.
 		sale_status = self.soup.find("div", class_="auction_details").find("strong").get_text()
 
-		sale = sale.Sale(0,prop_id, agency_id, price_text, price_type, sale_status, features)
+		sale_ = sale.Sale(0,prop_id, agency_id, price_text, price_type, sale_status, features)
 
-		return sale
+		return sale_
 		
 	def get_features(self):
-		feature = feature.Feature()
+		features_ = features.Features()
 
 		prop_features = self.soup.find("ul",class_="propertyFeatures")
 
@@ -156,19 +156,19 @@ class PropertyParser:
 			for f in prop_features.select("li"):
 				key = f.find("img")["alt"]
 				val = f.find("span").get_text()
-				setattr(feature,"_"+string.replace(a.lower()," ","_"),val)
+				setattr(features_,"_"+string.replace(key.lower()," ","_"),val)
 
 		# land size
-		setattr(feature,"_land_size",self.get_land_size())
+		setattr(features_,"_land_size",self.get_land_size())
 
-		return feature
+		return features_
 
 	def get_land_size(self):
 		land_size=""
 
 		for li in self.soup.find("div",class_="featureList").find_all("li"):
 			if "Land Size:" in li.get_text():
-				land_size = li.get_text()
+				land_size = li.find("span").get_text()
 				return land_size
 
 		return land_size
@@ -191,14 +191,14 @@ class PropertyParser:
 
 	def get_agency(self):
 		name = self.soup.find("p",class_="agencyName").get_text()
-		agency = agency.Agency(name)
-		return agency
+		agency_ = agency.Agency(name)
+		return agency_
 
 	def get_inspection(self,sale_id):
-		inspection = self.soup.find("div",id="inspectionTimes")
+		inspection_tag = self.soup.find("div",id="inspectionTimes")
 
 		inspects = []
-		for event in inspection.find_all("a",itemprop="events"):
+		for event in inspection_tag.find_all("a",itemprop="events"):
 			start = event.find("meta",itemprop="startDate")["content"]
 			end = event.find("meta",itemprop="endDate")["content"]
 			inspects.append(inspection.Inspection(sale_id,start,end))

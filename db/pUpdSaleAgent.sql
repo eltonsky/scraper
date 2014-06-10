@@ -15,13 +15,13 @@ CREATE PROCEDURE pUpdSaleAgent(
 		into
 			v_sale_agent_id
 		from
-			tSaleAgent
+			tsaleagent
 		WHERE
 			p_sale_id = sale_id
 		and p_agent_id = agent_id;
 
 		if v_sale_agent_id = 0 then
-			insert into tSaleAgent(
+			insert into tsaleagent(
 				sale_id,
 				agent_id
 			)

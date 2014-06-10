@@ -32,7 +32,7 @@ whole_proc:BEGIN
 		into
 			v_sale_id
 		from
-			tSale
+			tsale
 		WHERE
 			p_prop_id = prop_id
 		and p_agency_id = agency_id;
@@ -47,7 +47,7 @@ whole_proc:BEGIN
 				set p_status = v_default_status;
 			end if;
 
-			INSERT INTO tSale(
+			INSERT INTO tsale(
 				prop_id,
 				agency_id,
 				status)

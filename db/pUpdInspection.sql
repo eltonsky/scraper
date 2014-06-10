@@ -21,7 +21,7 @@ CREATE PROCEDURE pUpdInspection(
 		into
 			v_inspect_id
 		from
-			tInspection
+			tinspection
 		WHERE
 			p_sale_id = sale_id
 		and p_start = start
@@ -30,7 +30,7 @@ CREATE PROCEDURE pUpdInspection(
 		-- insert
 		IF v_inspect_id = 0 then
 
-			INSERT INTO tInspection(
+			INSERT INTO tinspection(
 				sale_id,
 				start,
 				end)

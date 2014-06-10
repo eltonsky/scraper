@@ -16,13 +16,13 @@ CREATE PROCEDURE pUpdAgent(
 		into
 			v_agent_id
 		from
-			tAgent
+			tagent
 		WHERE
 			p_name = name
 		and p_agency_id = agency_id;
 
 		if v_agent_id = 0 then
-			insert into tAgent(
+			insert into tagent(
 				name,
 				phone,
 				agency_id

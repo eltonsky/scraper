@@ -35,7 +35,7 @@ class Inspection:
 
 		print ("Updated/Inserted inspection : " +str(inspection_id))
 
-		return (status inspection_id)
+		return [status, inspection_id]
 
 
 	def select(self,addr_id):

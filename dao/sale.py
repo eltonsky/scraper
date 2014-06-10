@@ -33,7 +33,7 @@ class Sale:
 			return -1
 
 		args=(self._prop_id,self._agency_id,self._sale_status,self._price,self._price_type,
-			self._features._bed, self._features._bath, self._features._car_spaces,
+			self._features._bedrooms, self._features._bathrooms, self._features._car_spaces,
 			self._features._land_size)
 
 		result = self._db_util.callproc("pUpdSale", args)
@@ -44,9 +44,9 @@ class Sale:
 		sale_id = result[1]
 		price_id = result[2]
 
-		print ("Updated/Inserted sale : " +str(sale_id)+ " & price :" + str(price_id))
+		print ("Updated/Inserted sale : " +str(sale_id)+ " & price :" + str(price_id) + " status :" + str(status))
 
-		return (status sale_id price_id)
+		return [status, sale_id, price_id]
 
 
 	def upd_sale_agent(self,agent_ids):
@@ -62,11 +62,11 @@ class Sale:
 
 			result = self._db_util.callproc("pUpdSaleAgent", args)
 
-			self._db_util.close()
+			sale_agent_id = result[1]
 
-			sale_agent_id = result[0]
+			print ("Updated/Inserted sale agent id: " +str(sale_agent_id))
 
-		print ("Updated/Inserted sale agent id: " +str(sale_agent_id))
+		self._db_util.close()
 
 
 	def select(self,addr_id):

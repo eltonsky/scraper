@@ -14,12 +14,12 @@ CREATE PROCEDURE pUpdAgency(
 		into
 			v_agency_id
 		from
-			tAgency
+			tagency
 		WHERE
 			p_name = name;
 
 		if v_agency_id = 0 then
-			insert into tAgency(
+			insert into tagency(
 				name
 			)
 			values(

@@ -72,7 +72,7 @@ class Address:
 
 		print ("Inserted addr_id is " + str(row_id))
 
-		return (status row_id)
+		return [status,row_id]
 
 
 	def update(self):

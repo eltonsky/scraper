@@ -20,7 +20,7 @@ class Agency:
 		if self._db_util.connect() < 0:
 			return -1
 
-		args=(self._name)
+		args=[self._name]
 
 		result = self._db_util.callproc("pUpdAgency", args)
 
@@ -31,7 +31,7 @@ class Agency:
 
 		print ("Updated/Inserted agency : " +str(agency_id))
 
-		return (status agency_id)
+		return [status, agency_id]
 
 
 	def select(self,addr_id):

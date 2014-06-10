@@ -21,7 +21,7 @@ class Property:
 		self._land_size = land_size
 		self._type=type_
 		self._cr_date = cr_date
-		sefl._addr_id = addr_id
+		self._addr_id = addr_id
 
 	def upd_proc(self):
 		if self._db_util == None:
@@ -41,7 +41,7 @@ class Property:
 
 		print ("Updated/Inserted property_id is " + str(row_id))
 
-		return (status row_id)
+		return [status,row_id]
 
 
 	def select(self,addr_id):

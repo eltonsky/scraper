@@ -6,8 +6,8 @@ class Features:
 	"""Features"""
 
 	_sale_id=""
-	_bed=""
-	_bath=""
+	_bedrooms=""
+	_bathrooms=""
 	_car_sapces=""
 	_land_size=""
 	_cr_date=""
@@ -15,8 +15,8 @@ class Features:
 
 	def __init__(self,sale_id="",bed="",bath="",car_sapces="",land_size="",cr_date=""):
 		self._sale_id = sale_id
-		self._bed = bed
-		self._bath = bath
+		self._bedrooms = bed
+		self._bathrooms = bath
 		self._car_sapces= car_sapces
 		self._land_size= land_size
 		self._cr_date = cr_date
@@ -40,7 +40,7 @@ class Features:
 
 		print ("Updated/Inserted sale : " +str(sale_id)+ " & price :" + str(price_id))
 
-		return (status sale_id price_id)
+		return [status,sale_id,price_id]
 
 
 	def upd_sale_agent(self,agent_ids):

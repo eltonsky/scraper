@@ -19,15 +19,16 @@ CREATE PROCEDURE pUpdProperty(
 		into
 			v_property_id
 		from
-			tProperty
+			tproperty
 		WHERE
-			p_addr_id = addr_id;
+			p_addr_id = addr_id
+		and p_type = type;
 		-- don't need to check p_ext_id, because for each sale it's different
 
 		-- insert
 		IF v_property_id = 0 then
 
-			INSERT INTO tProperty(
+			INSERT INTO tproperty(
 				ext_id,
 				addr_id,
 				type,

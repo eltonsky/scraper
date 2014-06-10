@@ -146,7 +146,7 @@ CREATE TABLE IF NOT EXISTS tagent (
 
 
 # tSaleAgent
-CREATE TABLE IF NOT EXISTS tSaleAgent (
+CREATE TABLE IF NOT EXISTS tsaleagent (
   sale_agent_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
   agent_id 	INT NOT NULL,
   FOREIGN KEY (agent_id) 

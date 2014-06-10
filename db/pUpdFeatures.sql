@@ -22,7 +22,7 @@ CREATE PROCEDURE pUpdFeatures(
 		into
 			v_sale_id
 		from
-			tFeatures
+			tfeatures
 		WHERE
 			p_bed = bed
 		and p_bath = bath
@@ -33,7 +33,7 @@ CREATE PROCEDURE pUpdFeatures(
 		-- insert
 		IF v_sale_id = 0 then
 
-			INSERT INTO tFeatures(
+			INSERT INTO tfeatures(
 				sale_id,
 				bed,
 				bath,

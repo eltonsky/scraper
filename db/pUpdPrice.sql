@@ -20,7 +20,7 @@ CREATE PROCEDURE pUpdPrice(
 		into
 			o_price_id
 		from
-			tPrice
+			tprice
 		WHERE
 			p_sale_id = sale_id
 		and p_price = price
