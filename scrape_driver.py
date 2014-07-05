@@ -16,9 +16,9 @@ while i < int(num_process):
 	idx.append(i)
 	i=i+1
 
-# launch 3 async calls:
+# launch multiple async calls:
 procs = [subprocess.Popen(['./scrape.py', suburb_list, str(file_len), str(num_process), str(index)]) for index in idx]
-# wait.
+# wait to finish.
 for proc in procs:
     proc.wait()
 # check for results:

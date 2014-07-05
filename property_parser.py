@@ -8,64 +8,84 @@ import address, property_, sale, agency, agent, features, inspection
 
 class PropertyParser:
 
-	html_doc =""
-	html = None
+	_html = None
 	soup = None
+	_date_time = None
 
-	def __init__(self, doc):
-		self.html_doc = doc
-		self.html = open(doc)
-		self.soup = BeautifulSoup(self.html)
+	def __init__(self):
+		pass
 
-	def __del__(self):
-		if self.html != None:
-			self.html.close()
+	# def __init__(self, doc):
+	# 	self.html_doc = doc
+	# 	self.html = util.gunzip_file(doc)
+	# 	self.soup = BeautifulSoup(self.html)
 
-	def process(self):
-		# addr
-		addr = self.get_address()
-		res = addr.upd_proc()
-		addr_status = res[0]
-		addr_id = res[1]
+	# def __del__(self):
+	# 	if self.html is not None:
+	# 		self.html.close()
 
-		# features
-		features = self.get_features()
+	def process(self, doc, date_time):
 
-		# property
-		prop = self.get_property(addr_id,features._land_size) 
-		res = prop.upd_proc()
-		prop_status = res[0]
-		prop_id = res[1]
+		try:
+			# generate html obj
+			self._html = util.gunzip_file(doc)
+			self.soup = BeautifulSoup(self._html)
+			self._date_time = date_time
 
-		# agency
-		agency  = self.get_agency()
-		res = agency.upd_proc()
-		agency_id = res[1]
+			# addr
+			addr = self.get_address()
+			if addr is None:
+				return -1
 
-		# sale/price
-		sale = self.get_sale(prop_id, agency_id, features)
-		res = sale.upd_proc()
-		sale_status = res[0]
-		sale_id = res[1]
-		price_id = res[2]
+			res = addr.upd_proc()
+			addr_status = res[0]
+			addr_id = res[1]
 
-		setattr(sale,"_sale_id",sale_id)
-		
-		# agent
-		agents = self.get_agents(agency_id)
-		agent_ids=[]
-		for agent in agents:
-			res = agent.upd_proc()
-			if res[1] > 0:
-				agent_ids.append(res[1])
+			# features
+			features = self.get_features()
 
-		# sale agent
-		sale.upd_sale_agent(agent_ids)
+			# property
+			prop = self.get_property(addr_id,features._land_size) 
+			res = prop.upd_proc()
+			prop_status = res[0]
+			prop_id = res[1]
 
-		# inspection
-		inspections = self.get_inspection(sale_id)
-		for insp in inspections:	
-			res = insp.upd_proc()
+			# agency
+			agency  = self.get_agency()
+			res = agency.upd_proc()
+			agency_id = res[1]
+
+			# sale/price
+			sale = self.get_sale(prop_id, agency_id, features)
+			res = sale.upd_proc()
+			sale_status = res[0]
+			sale_id = res[1]
+			price_id = res[2]
+
+			setattr(sale,"_sale_id",sale_id)
+			
+			# agent
+			agents = self.get_agents(agency_id)
+			agent_ids=[]
+			for agent in agents:
+				res = agent.upd_proc()
+				if res[1] > 0:
+					agent_ids.append(res[1])
+
+			# sale agent
+			sale.upd_sale_agent(agent_ids)
+
+			# inspection
+			inspections = self.get_inspection(sale_id)
+			for insp in inspections:	
+				res = insp.upd_proc()
+
+			return 1
+
+		except Exception, e:
+			print("Failed to process doc : " + doc + " due to : " + str(e))
+			return -1
+
 
 		# print(addr)
 		# print(addr_id)
@@ -96,6 +116,10 @@ class PropertyParser:
 	def get_address(self):
 		addr = self.soup.find("h1",itemprop="address")
 
+		if addr is None:
+			print ("Failed to find addr !! Check it!")
+			return None
+
 		addr_obj = address.Address()
 
 		for span in addr.find_all("span"):
@@ -114,17 +138,19 @@ class PropertyParser:
 			elif key == "postalCode":
 				setattr(addr_obj,"_postcode",val)
 
+		setattr(addr_obj,"_capture_date_time",self._date_time)
+
 		return addr_obj
 
 
 	def get_sale(self,prop_id,agency_id, features):
-		price_tag = self.soup.find("p", class_="price")
+		price_tag = self.soup.find("div", id="listing_info").find("p", class_="price")
 
 		price_text = price_tag.find("span").get_text()
 
 		# if it's in auction
 		auction_tag = self.soup.find("p", class_="auctionDetails")
-		if auction_tag != None:
+		if auction_tag is not None:
 			# call it price type rather than sale_type, cause one sale may change
 			# from normal sale to auction or vice versa. It's flexible to track 
 			# it in price.
@@ -147,9 +173,9 @@ class PropertyParser:
 	def get_features(self):
 		features_ = features.Features()
 
-		prop_features = self.soup.find("ul",class_="propertyFeatures")
+		prop_features = self.soup.find("div", id="listing_info").find("ul",class_="propertyFeatures")
 
-		if prop_features != None:
+		if prop_features is not None:
 		# Bedrooms
 		# Bathrooms
 		# Car Spaces
@@ -160,7 +186,7 @@ class PropertyParser:
 
 		# land size
 		setattr(features_,"_land_size",self.get_land_size())
-
+		
 		return features_
 
 	def get_land_size(self):
@@ -175,7 +201,7 @@ class PropertyParser:
 
 
 	def get_type(self):
-		return self.soup.find("span",class_="propertyType").get_text()
+		return self.soup.find("div", id="listing_info").find("span",class_="propertyType").get_text()
 
 
 	def get_agents(self,agency_id):
@@ -197,7 +223,11 @@ class PropertyParser:
 	def get_inspection(self,sale_id):
 		inspection_tag = self.soup.find("div",id="inspectionTimes")
 
+		if inspection_tag is None:
+			return []
+
 		inspects = []
+
 		for event in inspection_tag.find_all("a",itemprop="events"):
 			start = event.find("meta",itemprop="startDate")["content"]
 			end = event.find("meta",itemprop="endDate")["content"]
@@ -206,6 +236,7 @@ class PropertyParser:
 		return inspects
 
 
-# test
-p_parser = PropertyParser("./property/PARK_ORCHARDS/20140506_08/000_21-23_gosford_crescent_park_orchards_vic_3114")
-p_parser.process()
+# # test
+# p_parser = PropertyParser()
+# p_parser.process("./property/PARK_ORCHARDS/20140506_08/000_21-23_gosford_crescent_park_orchards_vic_3114")
+

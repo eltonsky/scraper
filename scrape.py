@@ -7,6 +7,11 @@ import util
 import sys
 import time
 
+#TODO:
+# 1. use log
+# 2. set a log header : ts,level,process idx
+# 3. use config
+
 # tmp="http://www.realestate.com.au/buy/in-templestowe%2c+vic+3106/list-1?activeSort=list-date&includeSurrounding=true"
 log_dir="./logs/"
 user_agent="'Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.8.1.6) Gecko/20070802 SeaMonkey/1.1.4'"
@@ -17,6 +22,10 @@ includeSurrounding="includeSurrounding=false" # not include surrounding area for
 cmd="wget -U {0} '{1}' -O {2}"
 pl_output_dir_base="./listing/"
 p_output_dir_base="./property/"
+p_inbox="inbox"
+p_outbox="outbox"
+p_progress="progress"
+p_errbox="err"
 
 #suburb_list = [ "warrandyte+south", "3134"]
 
@@ -72,8 +81,15 @@ for i, line in enumerate(fp):
 		util.mkdir_p(pl_output_dir)	
 
 		# create properties dir
-		p_output_dir = p_output_dir_base + suburb+"/"+ datetime+"/"
+		#inbox
+		p_output_dir = p_output_dir_base + suburb+"/"+ datetime+"/" + p_inbox + "/"
 		util.mkdir_p(p_output_dir)
+		#outbox
+		util.mkdir_p(p_output_dir_base + suburb+"/"+ datetime+"/" + p_outbox)
+		#progress
+		util.mkdir_p(p_output_dir_base + suburb+"/"+ datetime+"/" + p_progress)
+		#errbox
+		util.mkdir_p(p_output_dir_base + suburb+"/"+ datetime+"/" + p_errbox)
 
 		# to keep the order of properties in a suburb
 		p_order = 0

@@ -2,7 +2,7 @@
 
 from bs4 import BeautifulSoup
 from random import randint
-import os, errno, gzip, string
+import os, errno, gzip, string, shutil
 
 valid_chars = "-_.%s%s" % (string.ascii_letters, string.digits)
 
@@ -14,6 +14,12 @@ def gzip_file(src):
 	f_in.close()
 	os.remove(src)
 
+def gunzip_file(src):
+	f = gzip.open(src, 'rb')
+	file_content = f.read()
+	f.close()
+	return file_content
+
 
 def file_len(fname):
     with open(fname) as f:
@@ -22,7 +28,7 @@ def file_len(fname):
     return i + 1
 
 def is_page_not_found(file):
-	if file.find("p",class_="noMatch") != None:
+	if file.find("p",class_="noMatch") is not None:
 		return True
 	
 	return False
@@ -87,3 +93,19 @@ def mkdir_p(path):
 		if exc.errno == errno.EEXIST and os.path.isdir(path):
 			pass
 		else: raise
+
+
+def move(src,dest,gzip=0):
+	try:
+		if gzip:
+			gzip_file(src)
+			src = src + ".gz"
+
+		shutil.move(src,dest)
+	except:
+		print("failed to compreass or mv "+src+" to " + dest+ "(gzip"+gzip+")")
+		return -1
+
+	return 1
+
+

@@ -14,7 +14,7 @@ class PropertyListParser:
 		self.soup = BeautifulSoup(self.html)
 
 	def __del__(self):
-		if self.html != None:
+		if self.html is not None:
 			self.html.close()
 
 	def process(self):
@@ -57,7 +57,7 @@ class PropertyListParser:
 
 		prop_features = prop.find("ul",class_="propertyFeatures")
 
-		if prop_features != None:
+		if prop_features is not None:
 			for f in prop.find("ul",class_="propertyFeatures").select("li"):
 				key = f.find("img")["alt"]
 				val = f.find("span").get_text()
@@ -72,7 +72,7 @@ class PropertyListParser:
 		listerName = prop.find("p",class_="listerName")
 		agent=""
 
-		if listerName != None:
+		if listerName is not None:
 			agent=listerName.find("span").get_text()
 
 		return agent
