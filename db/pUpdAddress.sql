@@ -7,7 +7,8 @@ CREATE PROCEDURE pUpdAddress(
     IN  p_street_name                   VARCHAR(64), 
     IN  p_locality                      VARCHAR(64),
     IN  p_region                        VARCHAR(16), 
-    IN  p_postcode                      VARCHAR(4)   
+    IN  p_postcode                      VARCHAR(4),
+    IN  p_capture_date_time             VARCHAR(16)
 )
 
 
@@ -34,13 +35,15 @@ CREATE PROCEDURE pUpdAddress(
 				street_name,
 				locality,
 				region,
-				postcode)
+				postcode,
+				capture_date_time)
 	  		VALUES (
 	  			p_street_no,
 	  			p_street_name,
 	  			p_locality,
 	  			p_region,
-	  			p_postcode
+	  			p_postcode,
+	  			p_capture_date_time
 	  		);
 
 	  		select 0,LAST_INSERT_ID();

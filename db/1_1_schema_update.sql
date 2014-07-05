@@ -21,7 +21,8 @@ CREATE TABLE IF NOT EXISTS taddr (
 
   UNIQUE KEY addr_unique_ix (street_no,street_name,locality,region),
 
-  cr_date 	TIMESTAMP DEFAULT NOW()
+  cr_date 	TIMESTAMP DEFAULT NOW(),
+  capture_date_time VARCHAR(16)
 ) ENGINE=INNODB ;
 
 
@@ -29,7 +30,8 @@ CREATE TABLE IF NOT EXISTS taddr (
 CREATE TABLE IF NOT EXISTS tagency (
   agency_id   INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
   name      VARCHAR(32) NOT NULL,
-  cr_date   TIMESTAMP DEFAULT NOW()
+  cr_date   TIMESTAMP DEFAULT NOW(),
+  capture_date_time VARCHAR(16)
 ) ENGINE=INNODB ;
 
 
@@ -44,7 +46,8 @@ CREATE TABLE IF NOT EXISTS tproperty (
   INDEX type_ix(type),
 
   land_size VARCHAR(128),
-  cr_date 	TIMESTAMP DEFAULT NOW()
+  cr_date 	TIMESTAMP DEFAULT NOW(),
+  capture_date_time VARCHAR(16)
 ) ENGINE=INNODB ;
 
 
@@ -62,7 +65,8 @@ CREATE TABLE IF NOT EXISTS tsale (
   status    VARCHAR(32) NOT NULL DEFAULT "LISTED",
   INDEX status_ix(status),
 
-  cr_date 	TIMESTAMP DEFAULT NOW()
+  cr_date 	TIMESTAMP DEFAULT NOW(),
+  capture_date_time VARCHAR(16)
 ) ENGINE=INNODB ;
 
 
@@ -78,7 +82,8 @@ CREATE TABLE IF NOT EXISTS tprice (
   type     VARCHAR(16),
   INDEX type_ix(type),
 
-  cr_date 	TIMESTAMP DEFAULT NOW()
+  cr_date 	TIMESTAMP DEFAULT NOW(),
+  capture_date_time VARCHAR(16)
 ) ENGINE=INNODB ;
 
 
@@ -101,6 +106,7 @@ CREATE TABLE IF NOT EXISTS tfeatures (
   land_size VARCHAR(128),
 
   cr_date 	TIMESTAMP DEFAULT NOW()
+    
 ) ENGINE=INNODB ;
 
 
@@ -113,7 +119,8 @@ CREATE TABLE IF NOT EXISTS tsalestatus (
 
   status    VARCHAR(32) NOT NULL,   
 
-  cr_date 	TIMESTAMP DEFAULT NOW()
+  cr_date 	TIMESTAMP DEFAULT NOW(),
+  capture_date_time VARCHAR(16)
 ) ENGINE=INNODB ;
 
 
@@ -128,7 +135,8 @@ CREATE TABLE IF NOT EXISTS tinspection (
   start    VARCHAR(32) NOT NULL,
   end      VARCHAR(32) NOT NULL,
 
-  cr_date 	TIMESTAMP DEFAULT NOW()
+  cr_date 	TIMESTAMP DEFAULT NOW(),
+  capture_date_time VARCHAR(16)
 ) ENGINE=INNODB ;
 
 
@@ -141,7 +149,8 @@ CREATE TABLE IF NOT EXISTS tagent (
   FOREIGN KEY (agency_id) 
         REFERENCES tagency(agency_id), 
 
-  cr_date 	TIMESTAMP DEFAULT NOW()
+  cr_date 	TIMESTAMP DEFAULT NOW(),
+  capture_date_time VARCHAR(16)
 ) ENGINE=INNODB ;
 
 
@@ -155,7 +164,8 @@ CREATE TABLE IF NOT EXISTS tsaleagent (
   sale_id   INT NOT NULL,
   FOREIGN KEY (sale_id) 
         REFERENCES tsale(sale_id),
-  INDEX sale_id_ix(sale_id)
+  INDEX sale_id_ix(sale_id),
+  capture_date_time VARCHAR(16)
 ) ENGINE=INNODB ;
 
 
