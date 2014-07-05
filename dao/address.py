@@ -10,6 +10,7 @@ class Address:
 	_locality=""
 	_region=""
 	_postcode=""
+	_capture_date_time=""
 	_cr_date=""
 	_db_util=None
 
@@ -30,12 +31,13 @@ class Address:
 	_select_qry = ("SELECT street_no,street_name,locality,region,postcode,cr_date FROM taddr"
          "WHERE addr_id = %s")
 	
-	def __init__(self,street_no="",street_name="",locality="",region="",postcode="",cr_date=""):
+	def __init__(self,street_no="",street_name="",locality="",region="",postcode="",capture_date_time="",cr_date=""):
 		self._street_no = street_no
 		self._street_name = street_name
 		self._locality = locality
 		self._region = region
 		self._postcode = postcode
+		self._capture_date_time = capture_date_time
 		self._cr_date = cr_date
 
 	def insert(self):
@@ -45,7 +47,7 @@ class Address:
 		if self._db_util.connect() < 0:
 			return -1
 
-		args=(self._street_no,self._street_name,self._locality,self._region,self._postcode)
+		args=(self._street_no,self._street_name,self._locality,self._region,self._postcode,self._capture_date_time)
 
 		row_id = self._db_util.execute(self._insert_qry, args)
 
@@ -61,7 +63,7 @@ class Address:
 		if self._db_util.connect() < 0:
 			return -1
 
-		args=(self._street_no,self._street_name,self._locality,self._region,self._postcode)
+		args=(self._street_no,self._street_name,self._locality,self._region,self._postcode,self._capture_date_time)
 
 		result = self._db_util.callproc("pUpdAddress", args)
 
@@ -70,7 +72,7 @@ class Address:
 		status = result[0]
 		row_id = result[1]
 
-		print ("Inserted addr_id is " + str(row_id))
+		print ("Inserted/Updated addr_id is " + str(row_id))
 
 		return [status,row_id]
 
@@ -82,7 +84,7 @@ class Address:
 		if self._db_util.connect() < 0:
 			return -1
 
-		args=(self._street_no,self._street_name,self._locality,self._region,self._postcode)
+		args=(self._street_no,self._street_name,self._locality,self._region,self._postcode,self._capture_date_time)
 
 		row_id = self._db_util.execute(self._update_qry, args)
 

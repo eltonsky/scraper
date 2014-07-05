@@ -8,16 +8,16 @@ class Features:
 	_sale_id=""
 	_bedrooms=""
 	_bathrooms=""
-	_car_sapces=""
+	_car_spaces=""
 	_land_size=""
 	_cr_date=""
 	_db_util=None
 
-	def __init__(self,sale_id="",bed="",bath="",car_sapces="",land_size="",cr_date=""):
+	def __init__(self,sale_id="",bed="",bath="",_car_spaces="",land_size="",cr_date=""):
 		self._sale_id = sale_id
 		self._bedrooms = bed
 		self._bathrooms = bath
-		self._car_sapces= car_sapces
+		self.__car_spaces= _car_spaces
 		self._land_size= land_size
 		self._cr_date = cr_date
 
