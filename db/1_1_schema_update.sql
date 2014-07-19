@@ -112,6 +112,7 @@ CREATE TABLE IF NOT EXISTS tfeatures (
 
 # tsalestatus
 CREATE TABLE IF NOT EXISTS tsalestatus (
+  sale_status_id int NOT NULL PRIMARY KEY AUTO_INCREMENT,
   sale_id 	INT NOT NULL,
   FOREIGN KEY (sale_id) 
         REFERENCES tsale(sale_id),
@@ -143,8 +144,8 @@ CREATE TABLE IF NOT EXISTS tinspection (
 # tagent
 CREATE TABLE IF NOT EXISTS tagent (
   agent_id 	INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
-  name      VARCHAR(32) NOT NULL,
-  phone     VARCHAR(32),
+  name      VARCHAR(32), # sometimes name is not provided, but phone must be provided.
+  phone     VARCHAR(32) NOT NULL,
   agency_id INT,
   FOREIGN KEY (agency_id) 
         REFERENCES tagency(agency_id), 

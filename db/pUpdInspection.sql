@@ -5,7 +5,8 @@ DELIMITER //
 CREATE PROCEDURE pUpdInspection(
 	IN  p_sale_id                 int,
     IN  p_start                   VARCHAR(32),
-    IN  p_end                     VARCHAR(32)
+    IN  p_end                     VARCHAR(32),
+    IN  p_capture_date_time       VARCHAR(16)
 )
 
     BEGIN
@@ -33,11 +34,13 @@ CREATE PROCEDURE pUpdInspection(
 			INSERT INTO tinspection(
 				sale_id,
 				start,
-				end)
+				end,
+				capture_date_time)
 	  		VALUES (
 	  			p_sale_id,
 	  			p_start,
-	  			p_end
+	  			p_end,
+	  			p_capture_date_time
 	  		);
 
 	  		set v_inspect_id = LAST_INSERT_ID();

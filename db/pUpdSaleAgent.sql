@@ -4,7 +4,8 @@ drop PROCEDURE IF EXISTS pUpdSaleAgent;
 DELIMITER //
 CREATE PROCEDURE pUpdSaleAgent(
 	IN  p_sale_id            int,
-    IN  p_agent_id           int
+    IN  p_agent_id           int,
+    IN  p_capture_date_time  VARCHAR(16)
 )
     BEGIN
     	DECLARE v_status INT DEFAULT 0;
@@ -23,11 +24,13 @@ CREATE PROCEDURE pUpdSaleAgent(
 		if v_sale_agent_id = 0 then
 			insert into tsaleagent(
 				sale_id,
-				agent_id
+				agent_id,
+				capture_date_time
 			)
 			values(
 				p_sale_id,
-				p_agent_id
+				p_agent_id,
+				p_capture_date_time
 			);
 
 			set v_sale_agent_id = LAST_INSERT_ID();

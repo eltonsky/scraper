@@ -6,6 +6,7 @@ CREATE PROCEDURE pUpdPrice(
 	IN  p_sale_id                 int,
     IN  p_price                   VARCHAR(32),
     IN  p_price_type              VARCHAR(16),
+    IN  p_capture_date_time       VARCHAR(16),
     OUT o_status                  int,
     OUT o_price_id                int
 
@@ -30,12 +31,14 @@ CREATE PROCEDURE pUpdPrice(
 			insert into tprice(
 				sale_id,
 				price,
-				type
+				type,
+				capture_date_time
 			)
 			values(
 				p_sale_id,
 				p_price,
-				p_price_type
+				p_price_type,
+				p_capture_date_time
 			);
 
 			set o_price_id = LAST_INSERT_ID();

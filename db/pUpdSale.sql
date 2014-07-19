@@ -11,7 +11,8 @@ CREATE PROCEDURE pUpdSale(
     IN  p_bed                     int,
     IN  p_bath                    int,
     IN  p_car_spaces              int,
-    IN  p_land_size               VARCHAR(128)
+    IN  p_land_size               VARCHAR(128),
+    IN  p_capture_date_time       VARCHAR(16)
 )
 
 whole_proc:BEGIN
@@ -20,6 +21,7 @@ whole_proc:BEGIN
     	DECLARE v_status INT DEFAULT 0;
     	DECLARE v_price_id INT DEFAULT 0;
     	DECLARE v_default_status VARCHAR(32) DEFAULT 'LIMITED';
+    	DECLARE v_sale_status_id INT DEFAULT 0;
 
     	DECLARE exit handler for sqlexception
 		BEGIN
@@ -50,11 +52,13 @@ whole_proc:BEGIN
 			INSERT INTO tsale(
 				prop_id,
 				agency_id,
-				status)
+				status,
+				capture_date_time)
 	  		VALUES (
 	  			p_prop_id,
 	  			p_agency_id,
-	  			p_status
+	  			p_status,
+	  			p_capture_date_time
 	  		);
 
 	  		set v_sale_id = LAST_INSERT_ID();
@@ -64,22 +68,31 @@ whole_proc:BEGIN
 
 		END IF;
 
+		-- insert sale status
+		Call pUpdSaleStatus(v_sale_id,p_status,p_capture_date_time, v_sale_status_id);
+		if v_sale_status_id <= 0 then
+			ROLLBACK;
+			select -2,v_sale_id;
+			LEAVE whole_proc;
+		end if; 
+
+
   		-- insert features
   		Call pUpdFeatures(v_sale_id, p_bed, p_bath, p_car_spaces, p_land_size, v_status);
   		if v_status < 0 then
   			ROLLBACK;
-  			select -2,v_sale_id,v_price_id;
+  			select -3,v_sale_id;
   			LEAVE whole_proc;
   		end if;
 
   		-- insert price
-  		Call pUpdPrice(v_sale_id,p_price,p_price_type,v_status,v_price_id);
+  		Call pUpdPrice(v_sale_id,p_price,p_price_type,p_capture_date_time,v_status,v_price_id);
 
   		if v_sale_id > 0 and v_price_id > 0 then
   			COMMIT;
   		ELSE
   			ROLLBACK;
-  			select -3,v_sale_id,v_price_id;
+  			select -4,v_sale_id;
   			LEAVE whole_proc;
   		end if;
 

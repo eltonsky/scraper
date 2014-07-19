@@ -6,7 +6,8 @@ CREATE PROCEDURE pUpdProperty(
 	IN  p_ext_id                     int,
 	IN  p_addr_id                    int, 
     IN  p_land_size                  VARCHAR(128), 
-    IN  p_type                       VARCHAR(32)
+    IN  p_type                       VARCHAR(32),
+    IN  p_capture_date_time          VARCHAR(16)
 )
 
     BEGIN
@@ -32,12 +33,14 @@ CREATE PROCEDURE pUpdProperty(
 				ext_id,
 				addr_id,
 				type,
-				land_size)
+				land_size,
+				capture_date_time)
 	  		VALUES (
 	  			p_ext_id,
 	  			p_addr_id,
 	  			p_type,
-	  			p_land_size
+	  			p_land_size,
+	  			p_capture_date_time
 	  		);
 
 	  		set v_property_id = LAST_INSERT_ID();

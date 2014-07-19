@@ -5,7 +5,8 @@ DELIMITER //
 CREATE PROCEDURE pUpdAgent(
 	IN  p_agency_id              int,
     IN  p_name                   VARCHAR(32),
-    IN  p_phone                  VARCHAR(32)
+    IN  p_phone                  VARCHAR(32),
+    IN  p_capture_date_time      VARCHAR(16)
 )
     BEGIN
     	DECLARE v_status INT DEFAULT 0;
@@ -25,12 +26,14 @@ CREATE PROCEDURE pUpdAgent(
 			insert into tagent(
 				name,
 				phone,
-				agency_id
+				agency_id,
+				capture_date_time
 			)
 			values(
 				p_name,
 				p_phone,
-				p_agency_id
+				p_agency_id,
+				p_capture_date_time
 			);
 
 			set v_agent_id = LAST_INSERT_ID();
