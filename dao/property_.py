@@ -10,18 +10,20 @@ class Property:
 	_type=""
 	_addr_id=""
 	_cr_date=""
+	_capture_date_time = ""
 	_db_util=None
 
 	_upd_proc = (
 		"Call pUpdAddress('{0}', '{1}', '{2}' ,'{3}' ,'{4}');"
 	  )	
 
-	def __init__(self,ext_id="",addr_id="",land_size="",type_="",cr_date=""):
+	def __init__(self,ext_id="",addr_id="",land_size="",type_="",capture_date_time="",cr_date=""):
 		self._ext_id = ext_id
 		self._land_size = land_size
 		self._type=type_
 		self._cr_date = cr_date
 		self._addr_id = addr_id
+		self._capture_date_time=capture_date_time 
 
 	def upd_proc(self):
 		if self._db_util == None:
@@ -30,7 +32,7 @@ class Property:
 		if self._db_util.connect() < 0:
 			return -1
 
-		args=(self._ext_id,self._addr_id,self._land_size,self._type)
+		args=(self._ext_id,self._addr_id,self._land_size,self._type,self._capture_date_time)
 
 		result = self._db_util.callproc("pUpdProperty", args)
 

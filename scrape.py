@@ -52,7 +52,7 @@ file_len = int(sys.argv[2])
 num_process = int(sys.argv[3])
 index = int(sys.argv[4])
 
-sys.stdout = open(log_dir+str(index), 'w')
+sys.stdout = open(log_dir+str(index)+"_scraper.log", 'w')
 
 start = (file_len/num_process)*index
 

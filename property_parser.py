@@ -103,7 +103,7 @@ class PropertyParser:
 		# type
 		type_ = self.get_type()
 
-		prpt_obj = property_.Property(prop_ext_id, addr_id, land_size, type_)
+		prpt_obj = property_.Property(prop_ext_id, addr_id, land_size, type_, self._date_time)
 
 		return prpt_obj
 
@@ -166,7 +166,7 @@ class PropertyParser:
 		# "Under Contract"/Under Offer etc.
 		sale_status = self.soup.find("div", class_="auction_details").find("strong").get_text()
 
-		sale_ = sale.Sale(0,prop_id, agency_id, price_text, price_type, sale_status, features)
+		sale_ = sale.Sale(0,prop_id, agency_id, price_text, price_type, sale_status, features, self._date_time)
 
 		return sale_
 		
@@ -208,16 +208,19 @@ class PropertyParser:
 		agents = []
 		# to avoid duplicate agent info make the seletor compilicated a bit
 		for agent_tag in self.soup.find("div",id="agentInfoExpanded").find_all("div",class_="agent"):
-			name = agent_tag.find("p",class_="agentName").find("strong").get_text()
+			name = agent_tag.find("p",class_="agentName")
+			if name is not None:
+				name = name.find("strong").get_text()
+
 			phone = agent_tag.find("li",class_="phone").get_text()
 
-			agents.append(agent.Agent(name,phone,agency_id))
+			agents.append(agent.Agent(name,phone,agency_id,self._date_time))
 		return agents
 
 
 	def get_agency(self):
 		name = self.soup.find("p",class_="agencyName").get_text()
-		agency_ = agency.Agency(name)
+		agency_ = agency.Agency(name,self._date_time)
 		return agency_
 
 	def get_inspection(self,sale_id):
@@ -231,7 +234,7 @@ class PropertyParser:
 		for event in inspection_tag.find_all("a",itemprop="events"):
 			start = event.find("meta",itemprop="startDate")["content"]
 			end = event.find("meta",itemprop="endDate")["content"]
-			inspects.append(inspection.Inspection(sale_id,start,end))
+			inspects.append(inspection.Inspection(sale_id,start,end,self._date_time))
 
 		return inspects
 

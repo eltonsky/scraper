@@ -6,11 +6,13 @@ class Agency:
 	"""Agency"""
 
 	_name=""
+	_capture_date_time=""
 	_cr_date=""
 	_db_util=None
 
-	def __init__(self,name="",cr_date=""):
+	def __init__(self,name="",capture_date_time="",cr_date=""):
 		self._name=name
+		self._capture_date_time=capture_date_time
 		self._cr_date = cr_date
 
 	def upd_proc(self):
@@ -20,7 +22,7 @@ class Agency:
 		if self._db_util.connect() < 0:
 			return -1
 
-		args=[self._name]
+		args=[self._name,self._capture_date_time]
 
 		result = self._db_util.callproc("pUpdAgency", args)
 

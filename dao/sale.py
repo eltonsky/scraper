@@ -12,10 +12,11 @@ class Sale:
 	_price_type=""
 	_sale_status=""
 	_cr_date=""
+	_capture_date_time=""
 	_features=None
 	_db_util=None
 
-	def __init__(self,sale_id="",prop_id="",agency_id="",price="",price_type="",sale_status="", features=None, cr_date=""):
+	def __init__(self,sale_id="",prop_id="",agency_id="",price="",price_type="",sale_status="", features=None, capture_date_time="", cr_date=""):
 		self._sale_id = sale_id
 		self._prop_id = prop_id
 		self._agency_id = agency_id
@@ -23,6 +24,7 @@ class Sale:
 		self._price_type=price_type
 		self._sale_status=sale_status
 		self._features = features
+		self._capture_date_time = capture_date_time
 		self._cr_date = cr_date
 
 	def upd_proc(self):
@@ -34,7 +36,7 @@ class Sale:
 
 		args=(self._prop_id,self._agency_id,self._sale_status,self._price,self._price_type,
 			self._features._bedrooms, self._features._bathrooms, self._features._car_spaces,
-			self._features._land_size)
+			self._features._land_size,self._capture_date_time)
 
 		result = self._db_util.callproc("pUpdSale", args)
 
@@ -58,7 +60,7 @@ class Sale:
 
 		for agent_id in agent_ids:
 
-			args=(self._sale_id,agent_id)
+			args=(self._sale_id,agent_id,self._capture_date_time)
 
 			result = self._db_util.callproc("pUpdSaleAgent", args)
 

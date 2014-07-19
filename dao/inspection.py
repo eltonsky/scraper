@@ -8,13 +8,15 @@ class Inspection:
 	_sale_id=""
 	_start=""
 	_end=""
+	_capture_date_time=""
 	_cr_date=""
 	_db_util=None
 
-	def __init__(self,sale_id="",start="",end="",cr_date=""):
+	def __init__(self,sale_id="",start="",end="",capture_date_time="",cr_date=""):
 		self._sale_id = sale_id
 		self._start = start
 		self._end = end
+		self._capture_date_time=capture_date_time
 		self._cr_date = cr_date
 
 	def upd_proc(self):
@@ -24,7 +26,7 @@ class Inspection:
 		if self._db_util.connect() < 0:
 			return -1
 
-		args=(self._sale_id,self._start,self._end)
+		args=(self._sale_id,self._start,self._end,self._capture_date_time)
 
 		result = self._db_util.callproc("pUpdInspection", args)
 

@@ -1,5 +1,10 @@
 #!/usr/bin/python
 
+# TODO:
+# 0.multi process
+# 1.handle Ctrl+C
+# 2.log
+
 from time import sleep
 from subprocess import call
 from bs4 import BeautifulSoup
@@ -7,7 +12,6 @@ import util, property_parser
 import sys, glob, shutil
 import time
 
-#TODO:
 # 1. find start & end of suburbs
 # 2. pick up next batch of .gz files (in the suburbs), order by ts
 # 3. for each file,
@@ -41,19 +45,20 @@ file_len = int(sys.argv[2])
 num_process = int(sys.argv[3])
 index = int(sys.argv[4])
 
-sys.stdout = open(log_dir+str(index), 'w')
+sys.stdout = open(log_dir+str(index)+"_processor.log", 'w')
 
-# start = (file_len/num_process)*index
+start = (file_len/num_process)*index
 
-# if index == num_process - 1:
-# 	end = file_len
-# else:
-# 	end = file_len/num_process*(index+1)
+if index == num_process - 1:
+	end = file_len
+else:
+	end = file_len/num_process*(index+1)
+
 # FOR TEST
-start = 0
-end = 1
+# start = 0
+#end = 2
 
-print ("Starting scraper... reading suburb from " + suburb_list + ", ranging from " + str(start) + " to " + str(end))
+print ("Starting processor... reading suburb from " + suburb_list + ", ranging from " + str(start) + " to " + str(end))
 
 # keep running, cos scraper will put new files in.
 #while (True):
@@ -74,14 +79,13 @@ for i, line in enumerate(fp):
 
 		# create properties dir
 		#inbox
-		curr_inbox = p_output_dir_base + suburb+"/*/" + p_inbox + "/*"
+		curr_inbox = p_output_dir_base + suburb+"/*/" + p_inbox + "/*.gz"
 
 		# get gz files
-		for file_inbox in glob.glob(curr_inbox):
-			if not file_inbox.endswith(".gz"):
-				continue
+		for file_inbox in sorted(glob.glob(curr_inbox)):
 
 			try:
+
 				# get file capture date. This will be inserted for most tables.
 				date_time = file_inbox.split("/")[3]
 
