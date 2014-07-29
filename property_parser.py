@@ -6,6 +6,7 @@ import sys
 sys.path.append('dao')
 import address, property_, sale, agency, agent, features, inspection
 
+
 class PropertyParser:
 
 	_html = None
@@ -242,4 +243,35 @@ class PropertyParser:
 # # test
 # p_parser = PropertyParser()
 # p_parser.process("./property/PARK_ORCHARDS/20140506_08/000_21-23_gosford_crescent_park_orchards_vic_3114")
+
+
+class BuyPropertyParser(PropertyParser):
+
+	def __init__(self):
+		PropertyParser.__init__(self)
+
+
+
+class SoldPropertyParser(PropertyParser):
+
+	def __init__(self):
+		PropertyParser.__init__(self)
+
+
+	def get_sale(self,prop_id,agency_id, features):
+		price_tag = self.soup.find("div", id="listing_info").find("p", class_="price")
+
+		price_text = price_tag.find("span", class_="priceText").get_text()
+
+		sale_status = util.SaleStatus.SOLD
+
+		sale_ = sale.Sale(0,prop_id, agency_id, price_text, util.PriceType.SOLD, sale_status, features, self._date_time)
+
+		return sale_
+
+
+# # test
+# p_parser = SoldPropertyParser()
+# p_parser.process("property/WANTIRNA_SOUTH/20140506_08/sold/inbox/test1.gz","2014-07-29")
+
 

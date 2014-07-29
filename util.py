@@ -109,3 +109,13 @@ def move(src,dest,gzip=0):
 	return 1
 
 
+
+class PriceType:
+	SOLD = "S"
+	NORMAL="N"
+	AUCTION="A"
+
+
+class SaleStatus:
+	SOLD = "SOLD"
+	LISTED = "LISTED"

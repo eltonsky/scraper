@@ -1,7 +1,6 @@
 #!/usr/bin/python
 
 # TODO:
-# 0.multi process
 # 1.handle Ctrl+C
 # 2.log
 
@@ -21,7 +20,6 @@ import time
 #	move to outbox if success / to err if failed
 
 log_dir="./logs/"
-pl_output_dir_base="./listing/"
 p_output_dir_base="./property/"
 p_inbox="inbox"
 p_outbox="outbox"
@@ -35,6 +33,12 @@ def get_property_list_url(cmd,user_agent,url_base,suburb_format,suburb,postcode,
 
 def get_property_url(cmd, user_agent, url_base, href, output):
 	return cmd.format(user_agent,url_base+href,output)
+
+def get_parser(mode):
+	if mode == "buy":
+		return parser_buy
+	else:
+		return parser_sold
 
 # suburb list
 suburb_list = sys.argv[1]
@@ -61,10 +65,11 @@ else:
 print ("Starting processor... reading suburb from " + suburb_list + ", ranging from " + str(start) + " to " + str(end))
 
 # keep running, cos scraper will put new files in.
-#while (True):
+# while (True):
 
 fp=open(suburb_list)
-p_parser = property_parser.PropertyParser()
+parser_buy = property_parser.BuyPropertyParser()
+parser_sold= property_parser.SoldPropertyParser()
 
 for i, line in enumerate(fp):
 	if i >= start and i < end:
@@ -82,6 +87,9 @@ for i, line in enumerate(fp):
 		curr_inbox = p_output_dir_base + suburb+"/*/" + p_inbox + "/*.gz"
 
 		# get gz files
+		# files will be sorted, it ensures :
+		# 1."buy"s are picked up b4 "sold"s
+		# 2. files are orderred by date
 		for file_inbox in sorted(glob.glob(curr_inbox)):
 
 			try:
@@ -95,6 +103,9 @@ for i, line in enumerate(fp):
 					continue
 
 				print ("moved " + file_inbox + " to " + file_progress)
+
+				# get parser by mode
+				p_parser = get_parser(file_inbox.split("/")[4])
 
 				# process
 				if p_parser.process(file_progress, date_time) < 0:

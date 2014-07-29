@@ -35,8 +35,8 @@ suburb_format = "in-{0}%2c+vic+{1}"
 
 suburb_iter = iter(suburb_list)
 
-def get_property_list_url(cmd,user_agent,url_base,suburb_format,suburb,postcode,page,index,url_sort_date,output):
-	return cmd.format(user_agent, url_base+"buy/"+suburb_format.format(suburb,postcode)+"/"+page+str(index)+"?"+url_sort_date+"&"+includeSurrounding, output)
+def get_property_list_url(cmd,user_agent,url_base,mode,suburb_format,suburb,postcode,page,index,url_sort_date,output):
+	return cmd.format(user_agent, url_base+mode+"/"+suburb_format.format(suburb,postcode)+"/"+page+str(index)+"?"+url_sort_date+"&"+includeSurrounding, output)
 
 def get_property_url(cmd, user_agent, url_base, href, output):
 	return cmd.format(user_agent,url_base+href,output)
@@ -48,9 +48,10 @@ suburb_list = sys.argv[1]
 start = 0
 end = 99999
 
-file_len = int(sys.argv[2])
-num_process = int(sys.argv[3])
-index = int(sys.argv[4])
+mode = sys.argv[2]
+file_len = int(sys.argv[3])
+num_process = int(sys.argv[4])
+index = int(sys.argv[5])
 
 sys.stdout = open(log_dir+str(index)+"_scraper.log", 'w')
 
@@ -82,14 +83,14 @@ for i, line in enumerate(fp):
 
 		# create properties dir
 		#inbox
-		p_output_dir = p_output_dir_base + suburb+"/"+ datetime+"/" + p_inbox + "/"
+		p_output_dir = p_output_dir_base + suburb+"/"+ datetime+"/"+mode+"/"+p_inbox+"/"
 		util.mkdir_p(p_output_dir)
 		#outbox
-		util.mkdir_p(p_output_dir_base + suburb+"/"+ datetime+"/" + p_outbox)
+		util.mkdir_p(p_output_dir_base + suburb+"/"+ datetime+"/" + mode+"/"+ p_outbox)
 		#progress
-		util.mkdir_p(p_output_dir_base + suburb+"/"+ datetime+"/" + p_progress)
+		util.mkdir_p(p_output_dir_base + suburb+"/"+ datetime+"/" + mode+"/"+p_progress)
 		#errbox
-		util.mkdir_p(p_output_dir_base + suburb+"/"+ datetime+"/" + p_errbox)
+		util.mkdir_p(p_output_dir_base + suburb+"/"+ datetime+"/" + mode+"/"+p_errbox)
 
 		# to keep the order of properties in a suburb
 		p_order = 0
@@ -99,7 +100,7 @@ for i, line in enumerate(fp):
 
 			output = pl_output_dir+str(list_index)
 
-			curr_cmd= get_property_list_url(cmd,user_agent,url_base,suburb_format,suburb,postcode,page,list_index,url_sort_date,output)
+			curr_cmd= get_property_list_url(cmd,user_agent,url_base,mode,suburb_format,suburb,postcode,page,list_index,url_sort_date,output)
 
 			print ("Run: " + curr_cmd)
 

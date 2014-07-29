@@ -66,6 +66,12 @@ whole_proc:BEGIN
 	  		-- 	set v_status = 0;
 	  		-- end if;
 
+	  	ELSE
+
+	  		UPDATE tsale
+	  		set status = p_status
+	  		where sale_id = v_sale_id;
+
 		END IF;
 
 		-- insert sale status

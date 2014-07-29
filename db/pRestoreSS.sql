@@ -1,3 +1,4 @@
+-- this is used to populate tsalestatus from tsale.
 
 drop procedure if exists pRestoreSS;
 
