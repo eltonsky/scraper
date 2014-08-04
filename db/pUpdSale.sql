@@ -5,7 +5,8 @@ DELIMITER //
 CREATE PROCEDURE pUpdSale(
 	IN  p_prop_id                 int,
 	IN  p_agency_id               int, 
-    IN  p_status                  VARCHAR(128), 
+    IN  p_status                  VARCHAR(32),
+    IN  p_sold_date               VARCHAR(32),
     IN  p_price                   VARCHAR(32),
     IN  p_price_type              VARCHAR(16),
     IN  p_bed                     int,
@@ -75,7 +76,7 @@ whole_proc:BEGIN
 		END IF;
 
 		-- insert sale status
-		Call pUpdSaleStatus(v_sale_id,p_status,p_capture_date_time, v_sale_status_id);
+		Call pUpdSaleStatus(v_sale_id,p_status,p_sold_date,p_capture_date_time, v_sale_status_id);
 		if v_sale_status_id <= 0 then
 			ROLLBACK;
 			select -2,v_sale_id;

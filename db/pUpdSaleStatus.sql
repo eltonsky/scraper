@@ -4,7 +4,8 @@ drop PROCEDURE IF EXISTS pUpdSaleStatus;
 DELIMITER //
 CREATE PROCEDURE pUpdSaleStatus(
 	IN  p_sale_id                 int,
-    IN  p_status                   VARCHAR(32),
+    IN  p_status                  VARCHAR(32),
+    IN  p_sold_date               VARCHAR(32),
     IN  p_capture_date_time       VARCHAR(16),
     OUT o_sale_status_id          int
 
@@ -27,11 +28,13 @@ CREATE PROCEDURE pUpdSaleStatus(
 			insert into tsalestatus(
 				sale_id,
 				status,
+				sold_date,
 				capture_date_time
 			)
 			values(
 				p_sale_id,
 				p_status,
+				p_sold_date,
 				p_capture_date_time
 			);
 

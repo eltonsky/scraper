@@ -60,7 +60,7 @@ else:
 
 # FOR TEST
 # start = 0
-#end = 2
+# end = 2
 
 print ("Starting processor... reading suburb from " + suburb_list + ", ranging from " + str(start) + " to " + str(end))
 
@@ -84,7 +84,9 @@ for i, line in enumerate(fp):
 
 		# create properties dir
 		#inbox
-		curr_inbox = p_output_dir_base + suburb+"/*/" + p_inbox + "/*.gz"
+		curr_inbox = p_output_dir_base + suburb+"/*/*/" + p_inbox + "/*.gz"
+
+		print (curr_inbox)
 
 		# get gz files
 		# files will be sorted, it ensures :

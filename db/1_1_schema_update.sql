@@ -119,6 +119,7 @@ CREATE TABLE IF NOT EXISTS tsalestatus (
   INDEX sale_id_ix(sale_id),
 
   status    VARCHAR(32) NOT NULL,   
+  sold_date VARCHAR(32),
 
   cr_date 	TIMESTAMP DEFAULT NOW(),
   capture_date_time VARCHAR(16)

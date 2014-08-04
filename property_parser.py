@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 from bs4 import BeautifulSoup
-import util, string
+import util, string, json, re
 import sys
 sys.path.append('dao')
 import address, property_, sale, agency, agent, features, inspection
@@ -110,7 +110,7 @@ class PropertyParser:
 
 
 	def get_property_id(self):
-		id_text = self.soup.find("span",class_="property_id").get_text()
+		id_text = self.soup.find("div",id="listing_header").find("span",class_="property_id").get_text()
 		id_list = id_text.split()
 		return id_list[len(id_list) - 1]
 
@@ -157,22 +157,24 @@ class PropertyParser:
 			# it in price.
 
 			# auction
-			price_type = 'A'
+			price_type = util.PriceType.AUCTION
 		else :
 			# normal sale
-			price_type = 'N'		
+			price_type = util.PriceType.NORMAL
 
 		# TODO: track auction details
 
 		# "Under Contract"/Under Offer etc.
 		sale_status = self.soup.find("div", class_="auction_details").find("strong").get_text()
 
-		sale_ = sale.Sale(0,prop_id, agency_id, price_text, price_type, sale_status, features, self._date_time)
+		sale_ = sale.Sale(0,prop_id, agency_id, price_text, price_type, sale_status, "", features, self._date_time)
 
 		return sale_
 		
 	def get_features(self):
 		features_ = features.Features()
+
+		print ("current Bedrooms : " + features_._bedrooms)
 
 		prop_features = self.soup.find("div", id="listing_info").find("ul",class_="propertyFeatures")
 
@@ -259,19 +261,32 @@ class SoldPropertyParser(PropertyParser):
 
 
 	def get_sale(self,prop_id,agency_id, features):
-		price_tag = self.soup.find("div", id="listing_info").find("p", class_="price")
+		baseInfo = self.soup.find("div", id="baseInfo")
 
-		price_text = price_tag.find("span", class_="priceText").get_text()
+		price = baseInfo.find("span", class_="priceText")
+
+		if price is None:
+			# extrac price from the json obj when price is a img
+			script = self.soup.find('script', text=re.compile('LMI\.Data\.listings'))
+
+			# res is like displayPrice:"$770,000"
+			res = re.search(r'displayPrice:"\$*\w*[,\w*]*',script.string).group(0)
+
+			price_text = res.split(":")[1].split("\"")[1]
+		else:
+			price_text = price.get_text()
+
+		sold_date = baseInfo.find("div",class_="sold_date").find("span").get_text() 
 
 		sale_status = util.SaleStatus.SOLD
 
-		sale_ = sale.Sale(0,prop_id, agency_id, price_text, util.PriceType.SOLD, sale_status, features, self._date_time)
+		sale_ = sale.Sale(0,prop_id, agency_id, price_text, util.PriceType.SOLD, sale_status, sold_date, features, self._date_time)
 
 		return sale_
 
 
 # # test
 # p_parser = SoldPropertyParser()
-# p_parser.process("property/WANTIRNA_SOUTH/20140506_08/sold/inbox/test1.gz","2014-07-29")
+# p_parser.process("property/WANTIRNA_SOUTH/20140506_08/sold/inbox/test1.gz","20140506_08")
 
 

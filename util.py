@@ -2,7 +2,8 @@
 
 from bs4 import BeautifulSoup
 from random import randint
-import os, errno, gzip, string, shutil
+import os, errno, gzip, string, shutil, time, datetime
+from time import mktime
 
 valid_chars = "-_.%s%s" % (string.ascii_letters, string.digits)
 
@@ -108,6 +109,26 @@ def move(src,dest,gzip=0):
 
 	return 1
 
+
+def if_contine(sentinal_sold_date,sentinal_page_count,SOLD_PAGE_START_FROM,SOLD_PAGE_COUNT):
+	# if it's not "sold", continue anyway
+	if sentinal_sold_date is None:
+		return 1
+
+	if sentinal_page_count >= SOLD_PAGE_COUNT:
+		return 0
+
+	sold_date = time.strptime(sentinal_sold_date, "%d-%b-%y")
+	sold_dt = datetime.datetime.fromtimestamp(mktime(sold_date))
+
+	now = datetime.datetime.now()
+
+	if (now - sold_dt).days < SOLD_PAGE_START_FROM:
+		print ("Continue downloading 'sold's")
+		return 1
+	
+	print("Stop downloading solds")
+	return 0
 
 
 class PriceType:

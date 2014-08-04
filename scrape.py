@@ -27,13 +27,15 @@ p_outbox="outbox"
 p_progress="progress"
 p_errbox="err"
 
-#suburb_list = [ "warrandyte+south", "3134"]
+# only get "sold"s for last 2 months; data prior should be in the system already
+SOLD_PAGE_START_FROM = 3650
+SOLD_PAGE_COUNT = 80
+SOLD_DATE_NA = "N/A"
 
-suburb_list = [ "donvale", "3111", "templestowe","3106", "warrandyte","3113","warrandyte south", "3114"]
+#suburb_list = [ "warrandyte+south", "3134"]
+#suburb_list = [ "donvale", "3111", "templestowe","3106", "warrandyte","3113","warrandyte south", "3114"]
 
 suburb_format = "in-{0}%2c+vic+{1}"
-
-suburb_iter = iter(suburb_list)
 
 def get_property_list_url(cmd,user_agent,url_base,mode,suburb_format,suburb,postcode,page,index,url_sort_date,output):
 	return cmd.format(user_agent, url_base+mode+"/"+suburb_format.format(suburb,postcode)+"/"+page+str(index)+"?"+url_sort_date+"&"+includeSurrounding, output)
@@ -41,7 +43,26 @@ def get_property_list_url(cmd,user_agent,url_base,mode,suburb_format,suburb,post
 def get_property_url(cmd, user_agent, url_base, href, output):
 	return cmd.format(user_agent,url_base+href,output)
 
+def get_sold_date(vcard):
+	sold_date = vcard.findParents('div',class_="resultBody")
+
+	# sometimes, the sold page will display a property on the right side bar
+	# which has different html format. ignore that one
+
+	if len(sold_date) == 0:
+		return None
+
+	sold_date_text = sold_date[0].find("p",class_="soldDate").get_text()
+
+	return sold_date_text.split(" ")[2]
+
+#
+# read arguments
+#
 datetime = time.strftime("%Y%m%d_%H")
+# to decide when to stop scraping "sold"s
+sentinal_sold_date = None
+sentinal_page_count = 0
 
 # suburb list
 suburb_list = sys.argv[1]
@@ -52,17 +73,21 @@ mode = sys.argv[2]
 file_len = int(sys.argv[3])
 num_process = int(sys.argv[4])
 index = int(sys.argv[5])
+start= int(sys.argv[6])
+end = int(sys.argv[7])
 
 sys.stdout = open(log_dir+str(index)+"_scraper.log", 'w')
 
-start = (file_len/num_process)*index
+if start == -1:
+	start = (file_len/num_process)*index
 
-if index == num_process - 1:
-	end = file_len
-else:
-	end = file_len/num_process*(index+1)
+if end == -1:
+	end = file_len*(index+1)/num_process
 
 print ("Starting scraper... reading suburb from " + suburb_list + ", ranging from " + str(start) + " to " + str(end))
+
+# finish reading arguments
+#
 
 fp=open(suburb_list)
 
@@ -71,7 +96,7 @@ for i, line in enumerate(fp):
 
 		s_ary = line.split()
 		postcode=s_ary[0]
-		suburb = "_".join(s_ary[1].upper().split(" "))
+		suburb = "_".join(s_ary[1].split(" "))
 
 		print (str(index) + " : Processing " + postcode + " " + suburb)
 
@@ -94,6 +119,8 @@ for i, line in enumerate(fp):
 
 		# to keep the order of properties in a suburb
 		p_order = 0
+		sentinal_sold_date = None
+		sentinal_page_count = 0
 
 		# we don't know how many pages are there..
 		while (True):
@@ -101,6 +128,9 @@ for i, line in enumerate(fp):
 			output = pl_output_dir+str(list_index)
 
 			curr_cmd= get_property_list_url(cmd,user_agent,url_base,mode,suburb_format,suburb,postcode,page,list_index,url_sort_date,output)
+
+			# only download SOLD_PAGE_COUNT pages for 'sold's
+			sentinal_page_count = sentinal_page_count + 1
 
 			print ("Run: " + curr_cmd)
 
@@ -132,8 +162,18 @@ for i, line in enumerate(fp):
 					call(p_cmd, shell=True)
 					util.gzip_file(p_output)
 
+					# update current sold date. only update it when it's not none
+					sold_date = get_sold_date(vcard)
+					if sold_date is not None and sold_date != SOLD_DATE_NA:
+						sentinal_sold_date = sold_date
+
 				except:
 					print "Unexpected error:", sys.exc_info()[0]
+
+			# if this is for "sold", we only get data for specified time range.
+			# check if we should continue for next page
+			if not util.if_contine(sentinal_sold_date,sentinal_page_count,SOLD_PAGE_START_FROM,SOLD_PAGE_COUNT):
+				break
 
 			sleep(util.delay()) 
 
